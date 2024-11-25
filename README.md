@@ -23,10 +23,11 @@ Welcome to the **One Piece Card Model** repository! This project is a machine le
   - `pandas`
   - `Pillow`
   - `Tkinter`
+  - `opencv-python`
 
 Install dependencies via pip:
 ```bash
-pip install torch torchvision pandas Pillow tkinter
+pip install torch torchvision pandas Pillow tkinter opencv-python
 ```
 
 ## Usage
