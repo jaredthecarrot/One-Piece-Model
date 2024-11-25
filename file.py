@@ -80,7 +80,7 @@ def createwidgets():
     root.feedlabel = Label(root, bg="MediumPurple1", fg="white", text="Card Prediction", font=('Arial',20))
     root.feedlabel.grid(row=1, column=13, padx=10, pady=10, columnspan=2)
 #ENTRY
-    root.saveLocationEntry = Entry(root, width=55, textvariable=destPath)
+    root.saveLocationEntry = Entry(root, width=30, textvariable=destPath)
     root.saveLocationEntry.grid(row=3, column=1, padx=10, pady=10)
 #BROWSE
     root.browseButton = Button(root, width=10, text="BROWSE", command=destBrowse)
@@ -106,7 +106,7 @@ def createwidgets():
     root.predictionLabel = Label(root, bg="MediumPurple1", borderwidth=3, relief="groove")
     root.predictionLabel.grid(row=2, column=12, padx=10, pady=10, columnspan=2)   
 
-    root.openImageEntry = Entry(root, width=55, textvariable=imagePath)
+    root.openImageEntry = Entry(root, width=30, textvariable=imagePath)
     root.openImageEntry.grid(row=3, column=4, padx=10, pady=10)
 
     root.openImageButton = Button(root, width=10, text="CARD SEARCH", command=imageBrowse)
@@ -127,7 +127,10 @@ def ShowFeed():
     if ret:
         # Flipping the frame vertically
         frame = cv2.flip(frame, 1)
-
+        width = int(frame.shape[1] * 75 / 100)
+        height = int(frame.shape[0] * 75 / 100)
+        new_dimensions = (width, height)
+        frame = cv2.resize(frame, new_dimensions, interpolation=cv2.INTER_AREA)
         # Displaying date and time on the feed
         cv2.putText(frame, datetime.now().strftime('%d/%m/%Y %H:%M:%S'), (20,30), cv2.FONT_HERSHEY_DUPLEX, 0.5, (0,255,255))
 
@@ -161,6 +164,8 @@ def destBrowse():
 
 def imageBrowse():
     # makes the path
+    global imgName
+    
     openDirectory = filedialog.askopenfilename(initialdir="OnePieceModel/one-piece-cards")
 
     # shows path
@@ -172,10 +177,12 @@ def imageBrowse():
     imageView = Image.open(openDirectory)
 
     # Resizing
-    imageResize = imageView.resize((640, 480), Image.LANCZOS)
+    imageResize = imageView.resize((300, 300), Image.LANCZOS)
 
     # makes image object
     imageDisplay = ImageTk.PhotoImage(imageResize)
+
+    imgName = openDirectory
 
     #makes the label
     root.imageLabel.config(image=imageDisplay)
@@ -201,7 +208,10 @@ def Capture():
 
     # Capturing the IMAGE
     ret, frame = root.cap.read()
-
+    width = int(frame.shape[1] * 50 / 100)
+    height = int(frame.shape[0] * 50 / 100)
+    new_dimensions = (width, height)
+    frame = cv2.resize(frame, new_dimensions, interpolation=cv2.INTER_AREA)
     # Displaying date and time 
     cv2.putText(frame, datetime.now().strftime('%d/%m/%Y %H:%M:%S'), (430,460), cv2.FONT_HERSHEY_DUPLEX, 0.5, (0,255,255))
 
@@ -252,11 +262,17 @@ def StartCAM():
 def showPRED():
     
     randomimage = predict(imgName)
+    
+    
+    print(imgName)
+
+
     base = randomimage.split('-')[0]
-    a = os.path.join('/one-piece-cards/Cards', base, randomimage, '.png' ) #OP01-001 
+    #change to ur path
+    a = os.path.join('/Users/enriquealba/Desktop/Camera/OnePieceModel/one-piece-cards/Cards', base, randomimage + '.png') #OP01-001 
 
     # opens image
-    imageView = Image.open(randomimage)
+    imageView = Image.open(a)
 
     # Resizing
     imageResize = imageView.resize((224, 320), Image.LANCZOS)
@@ -276,13 +292,13 @@ root = tk.Tk()
 root.cap = cv2.VideoCapture(0)
 
 #WIDTH HEIGHT
-width, height = 640, 480
+width, height = 640, 400
 root.cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 root.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
 #TITLE
 root.title("Card Cloud")
-root.geometry("1800x700")
+root.geometry("2000x700")
 root.resizable(True, True)
 root.configure(background = "thistle1")
 
